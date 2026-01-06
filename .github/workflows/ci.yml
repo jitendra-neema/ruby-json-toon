@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
+<<<<<<< Updated upstream
     branches: [ main, develop ]
     tags:
       - 'v*'
+=======
+    branches: [ main ]
+>>>>>>> Stashed changes
   pull_request:
     branches: [ main ]
 
@@ -25,7 +29,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler: '2.4.22'
-          bundler-cache: true  # ADD THIS
+          bundler-cache: true
       
       - name: Cache Ruby gems
         id: bundle-cache
