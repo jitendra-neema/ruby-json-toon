@@ -1,8 +1,12 @@
+# frozen_string_literal: true
+
 require 'simplecov'
-SimpleCov.start do
-  add_filter '/spec/'
-  minimum_coverage 95
-end if ENV['COVERAGE']
+if ENV['COVERAGE']
+  SimpleCov.start do
+    add_filter '/spec/'
+    minimum_coverage 95
+  end
+end
 
 require 'json_to_toon'
 
