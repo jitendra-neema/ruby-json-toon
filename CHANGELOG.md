@@ -16,11 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite
 - Full TOON specification compliance
 
+## [0.1.0] - Initial publish
 ### Added
 - Initial Encoder class implementation
 - Tests for JSON to TOON conversion
 
-## [0.1.0] - Initial publish
+##[0.2.0] - First tagged release
+### Added
+ - Updated to run release workflow on tag pushes
 
 ## [1.0.0] - TBD
 
