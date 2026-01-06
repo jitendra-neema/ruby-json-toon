@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    json_to_toon (0.2.0)
+    ruby-json-toon (0.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -76,7 +76,6 @@ PLATFORMS
 DEPENDENCIES
   benchmark-ips (~> 2.12)
   bundler (>= 2.4.22, < 3)
-  json_to_toon!
   memory_profiler (~> 1.0)
   rake
   robocop
@@ -84,6 +83,7 @@ DEPENDENCIES
   rubocop (~> 1.50)
   rubocop-rake (~> 0.7)
   rubocop-rspec (~> 3.0)
+  ruby-json-toon!
   simplecov (~> 0.22.0)
 
 BUNDLED WITH
