@@ -121,6 +121,13 @@ jobs:
     needs: [test, build]
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     
+    permissions:
+      contents: write
+      id-token: write
+    
+    environment:
+      name: release
+    
     steps:
       - uses: actions/checkout@v4
       
@@ -129,29 +136,15 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler: '2.4.22'
-
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
-
-      - name: Build gem
-        run: gem build json_to_toon.gemspec
+          bundler-cache: true
       
-      - name: Publish to RubyGems
-        env:
-          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
-        run: |
-          mkdir -p ~/.gem
-          cat << EOF > ~/.gem/credentials
-          ---
-          :rubygems_api_key: ${GEM_HOST_API_KEY}
-          EOF
-          chmod 0600 ~/.gem/credentials
-          gem push json_to_toon-*.gem
+      - name: Publish to RubyGems (Trusted Publishing)
+        uses: rubygems/release-gem@v1
       
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          files: json_to_toon-*.gem
+          files: "*.gem"
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_unmatched_files: true
+
