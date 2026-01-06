@@ -7,7 +7,7 @@ Lightweight Ruby library for converting JSON data to TOON (Token-Oriented Object
 Convert JSON to TOON (Token-Oriented Object Notation)
 
 Authors: Jitendra Neema  
-Contact: jitenra.neema.8@gmail.com
+Contact: jitendra.neema.8@gmail.com
 
 Homepage: https://github.com/jitendra-neema/ruby-json-toon  
 Documentation: https://rubydoc.info/gems/ruby-json-toon  
