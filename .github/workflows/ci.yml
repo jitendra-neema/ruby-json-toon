@@ -25,6 +25,18 @@ jobs:
           bundler: '2.4.22'
           bundler-cache: true  # ADD THIS
       
+      - name: Cache Ruby gems
+        id: bundle-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+
+      - name: Install dependencies (only on cache miss)
+        if: steps.bundle-cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
+
       # REMOVE the "Install Bundler manually" step - it's redundant
       
       - name: Run tests
@@ -44,6 +56,7 @@ jobs:
   lint:
     name: Lint Ruby
     runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'pull_request' }}
     
     steps:
       - uses: actions/checkout@v4
@@ -54,6 +67,20 @@ jobs:
           ruby-version: '3.2'
           bundler: '2.4.22'
           bundler-cache: true
+      - name: Cache Ruby gems
+        id: bundle-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+
+      - name: Install dependencies (only on cache miss)
+        if: steps.bundle-cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
+      
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
       
       - name: Run linters
         run: bundle exec rubocop
@@ -72,6 +99,17 @@ jobs:
           ruby-version: '3.2'
           bundler: '2.4.22'
           bundler-cache: true
+      - name: Cache Ruby gems
+        id: bundle-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+
+      - name: Install dependencies (only on cache miss)
+        if: steps.bundle-cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
       
       - name: Generate coverage report
         continue-on-error: true
@@ -99,6 +137,17 @@ jobs:
           ruby-version: '3.2'
           bundler: '2.4.22'
           bundler-cache: true
+      - name: Cache Ruby gems
+        id: bundle-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+
+      - name: Install dependencies (only on cache miss)
+        if: steps.bundle-cache.outputs.cache-hit != 'true'
+        run: bundle install --jobs 4 --retry 3
       
       - name: Build gem
         run: gem build json_to_toon.gemspec
