@@ -24,7 +24,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler: '2.4.22'
-          bundler-cache: true
             
       - name: Run tests
         run: bundle exec rspec --format documentation
@@ -49,7 +48,6 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler: '2.4.22'
-          bundler-cache: true
       
       - name: Run linters
         run: bundle exec rubocop
@@ -67,7 +65,6 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler: '2.4.22'
-          bundler-cache: true
       
       - name: Generate coverage report
         run: COVERAGE=true bundle exec rspec
@@ -92,7 +89,6 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler: '2.4.22'
-          bundler-cache: true
       
       - name: Build gem
         run: gem build json_to_toon.gemspec
@@ -121,7 +117,6 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler: '2.4.22'
-          bundler-cache: true
       
       - name: Build gem
         run: gem build json_to_toon.gemspec
