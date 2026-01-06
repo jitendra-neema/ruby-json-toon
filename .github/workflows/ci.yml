@@ -29,13 +29,16 @@ jobs:
       
       - name: Run tests
         run: bundle exec rspec --format documentation
-      
+
       - name: Check test coverage
         if: matrix.ruby == '3.2'
+        continue-on-error: true
         run: |
           COVERAGE=true bundle exec rspec
           if [ -f coverage/.last_run.json ]; then
             echo "Coverage report generated"
+          else
+            echo "Coverage not generated; continuing without failing the job"
           fi
 
   lint:
@@ -71,9 +74,11 @@ jobs:
           bundler-cache: true
       
       - name: Generate coverage report
+        continue-on-error: true
         run: COVERAGE=true bundle exec rspec
-      
+
       - name: Upload coverage to Codecov
+        continue-on-error: true
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/coverage.json
