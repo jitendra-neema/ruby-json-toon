@@ -3,8 +3,7 @@ name: CI
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'
+    tags: ['v*']
   pull_request:
     branches: [ main ]
 
@@ -26,37 +25,21 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler: '2.4.22'
           bundler-cache: true
-      
-      - name: Cache Ruby gems
-        id: bundle-cache
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
-      - name: Install dependencies (only on cache miss)
-        if: steps.bundle-cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
-      
+            
       - name: Run tests
         run: bundle exec rspec --format documentation
-
+      
       - name: Check test coverage
         if: matrix.ruby == '3.2'
-        continue-on-error: true
         run: |
           COVERAGE=true bundle exec rspec
           if [ -f coverage/.last_run.json ]; then
             echo "Coverage report generated"
-          else
-            echo "Coverage not generated; continuing without failing the job"
           fi
 
   lint:
     name: Lint Ruby
     runs-on: ubuntu-latest
-    continue-on-error: ${{ github.event_name == 'pull_request' }}
     
     steps:
       - uses: actions/checkout@v4
@@ -67,20 +50,6 @@ jobs:
           ruby-version: '3.2'
           bundler: '2.4.22'
           bundler-cache: true
-      - name: Cache Ruby gems
-        id: bundle-cache
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
-      - name: Install dependencies (only on cache miss)
-        if: steps.bundle-cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
-      
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
       
       - name: Run linters
         run: bundle exec rubocop
@@ -99,24 +68,11 @@ jobs:
           ruby-version: '3.2'
           bundler: '2.4.22'
           bundler-cache: true
-      - name: Cache Ruby gems
-        id: bundle-cache
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
-      - name: Install dependencies (only on cache miss)
-        if: steps.bundle-cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
       
       - name: Generate coverage report
-        continue-on-error: true
         run: COVERAGE=true bundle exec rspec
-
+      
       - name: Upload coverage to Codecov
-        continue-on-error: true
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage/coverage.json
@@ -137,17 +93,6 @@ jobs:
           ruby-version: '3.2'
           bundler: '2.4.22'
           bundler-cache: true
-      - name: Cache Ruby gems
-        id: bundle-cache
-        uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
-      - name: Install dependencies (only on cache miss)
-        if: steps.bundle-cache.outputs.cache-hit != 'true'
-        run: bundle install --jobs 4 --retry 3
       
       - name: Build gem
         run: gem build json_to_toon.gemspec
