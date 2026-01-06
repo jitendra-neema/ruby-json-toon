@@ -2,13 +2,9 @@ name: CI
 
 on:
   push:
-<<<<<<< Updated upstream
-    branches: [ main, develop ]
+    branches: [ main ]
     tags:
       - 'v*'
-=======
-    branches: [ main ]
->>>>>>> Stashed changes
   pull_request:
     branches: [ main ]
 
@@ -42,8 +38,6 @@ jobs:
       - name: Install dependencies (only on cache miss)
         if: steps.bundle-cache.outputs.cache-hit != 'true'
         run: bundle install --jobs 4 --retry 3
-
-      # REMOVE the "Install Bundler manually" step - it's redundant
       
       - name: Run tests
         run: bundle exec rspec --format documentation
