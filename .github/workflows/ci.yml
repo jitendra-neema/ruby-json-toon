@@ -22,7 +22,15 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+          bundler: 'none'  # Disable automatic Bundler installation
+      
+      - name: Install Bundler manually
+        run: |
+          gem install bundler -v 2.3.26 --no-document
+          bundle --version
+      
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
       
       - name: Run tests
         run: bundle exec rspec --format documentation
@@ -36,7 +44,7 @@ jobs:
           fi
 
   lint:
-    name: RuboCop
+    name: Lint Ruby
     runs-on: ubuntu-latest
     
     steps:
@@ -48,8 +56,8 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
       
-      - name: Run RuboCop
-        run: bundle exec rubocop --format progress
+      - name: Run linters
+        run: bundle exec rubocop
 
   coverage:
     name: Code Coverage
