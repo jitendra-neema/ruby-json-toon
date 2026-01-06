@@ -149,7 +149,7 @@ jobs:
           gem push json_to_toon-*.gem
       
       - name: Create GitHub Release
-        uses: softprogs/action-gh-release@v2  # Changed to v2
+        uses: softprops/action-gh-release@v1
         with:
           files: json_to_toon-*.gem
           generate_release_notes: true
