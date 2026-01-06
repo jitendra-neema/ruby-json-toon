@@ -22,15 +22,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler: 'none'  # Disable automatic Bundler installation
+          bundler: '2.4.22'
+          bundler-cache: true  # ADD THIS
       
-      - name: Install Bundler manually
-        run: |
-          gem install bundler -v 2.3.26 --no-document
-          bundle --version
-      
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
+      # REMOVE the "Install Bundler manually" step - it's redundant
       
       - name: Run tests
         run: bundle exec rspec --format documentation
@@ -54,6 +49,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
+          bundler: '2.4.22'  # ADD THIS
           bundler-cache: true
       
       - name: Run linters
@@ -71,6 +67,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
+          bundler: '2.4.22'  # ADD THIS
           bundler-cache: true
       
       - name: Generate coverage report
@@ -95,6 +92,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
+          bundler: '2.4.22'  # ADD THIS
           bundler-cache: true
       
       - name: Build gem
@@ -123,6 +121,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
+          bundler: '2.4.22'  # ADD THIS
           bundler-cache: true
       
       - name: Build gem
@@ -141,10 +140,9 @@ jobs:
           gem push json_to_toon-*.gem
       
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprogs/action-gh-release@v2  # Changed to v2
         with:
           files: json_to_toon-*.gem
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
