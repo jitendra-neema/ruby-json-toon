@@ -1,10 +1,25 @@
 # JSON to TOON
 
-A lightweight, zero-dependency Ruby library for converting JSON data to TOON (Token-Oriented Object Notation) format, achieving 30-60% token reduction for LLM applications.
+Lightweight Ruby library for converting JSON data to TOON (Token-Oriented Object Notation), achieving 30–60% token reduction for LLM applications.
+
+## Summary
+
+Convert JSON to TOON (Token-Oriented Object Notation)
+
+Authors: Jitendra Neema  
+Contact: jitenra.neema.8@gmail.com
+
+Homepage: https://github.com/jitendra-neema/ruby-json-toon  
+Documentation: https://rubydoc.info/gems/ruby-json-toon  
+Changelog: https://github.com/jitendra-neema/ruby-json-toon/blob/main/CHANGELOG.md  
+Bug tracker: https://github.com/jitendra-neema/ruby-json-toon/issues  
+Rubygems: https://rubygems.org/gems/ruby-json-toon
+
+Requires Ruby >= 2.7.0
 
 ## What is TOON?
 
-TOON (Token-Oriented Object Notation) is a compact, indentation-based data format optimized for LLM token efficiency. It uses 30-60% fewer tokens than JSON while remaining human-readable.
+TOON (Token-Oriented Object Notation) is a compact, indentation-based data format optimized for LLM token efficiency. It uses roughly 30–60% fewer tokens than JSON while remaining human-readable.
 
 ### Comparison
 
@@ -27,16 +42,22 @@ users[2]{id,name,role}:
 
 ## Installation
 
-Add to your Gemfile:
-
-```ruby
-gem 'json_to_toon'
-```
-
-Or install directly:
+Install the gem:
 
 ```bash
-gem install json_to_toon
+gem install ruby-json-toon
+```
+
+Or add to your Gemfile:
+
+```ruby
+gem 'ruby-json-toon'
+```
+
+Require the library in your code (require path follows the library files):
+
+```ruby
+require 'json_to_toon'
 ```
 
 ## Quick Start
@@ -57,10 +78,6 @@ json_data = JSON.parse('{"users":[{"id":1,"name":"Alice"}]}')
 toon = JsonToToon.encode(json_data)
 ```
 
-## Documentation
-
-See full documentation at [rubydoc.info](https://rubydoc.info/gems/json_to_toon)
-
 ## Options
 
 ```ruby
@@ -73,8 +90,13 @@ JsonToToon.encode(data,
 
 ## Development
 
+Clone the repo, install dependencies, run tests, and build the gem:
+
 ```bash
-# Install dependencies
+git clone https://github.com/jitendra-neema/ruby-json-toon
+cd ruby-json-toon
+
+# Install development dependencies
 bundle install
 
 # Run tests
@@ -84,15 +106,18 @@ bundle exec rspec
 bundle exec rubocop
 
 # Build gem
-gem build json_to_toon.gemspec
+gem build ruby-json-toon.gemspec
 ```
+
+Development dependencies (from the gemspec): benchmark-ips, memory_profiler, rake, rspec, rubocop, rubocop-rake, rubocop-rspec, simplecov.
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License — see LICENSE file for details.
 
 ## Links
 
-- [TOON Specification](https://toonformat.dev)
-- [GitHub Repository](https://github.com/jitendra-neema/json_to_toon)
-- [Bug Tracker](https://github.com/jitendra-neema/json_to_toon/issues)
+- TOON Specification: https://toonformat.dev
+- Homepage / source: https://github.com/jitendra-neema/ruby-json-toon
+- Documentation: https://rubydoc.info/gems/ruby-json-toon
+- Bug tracker: https://github.com/jitendra-neema/ruby-json-toon/issues
