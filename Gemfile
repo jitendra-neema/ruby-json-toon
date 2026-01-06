@@ -1,8 +1,12 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem 'bundler', '~> 2.4', '>= 2.4.22'
+source 'https://rubygems.org'
 
-gem "robocop"
-gem "rspec"
-gem "rake"
-gem "simplecov", "~> 0.22.0", group: :development
+gemspec
+
+gem 'bundler', '>= 2.4.22', '< 3'
+
+gem 'rake'
+gem 'robocop'
+gem 'rspec'
+gem 'simplecov', '~> 0.22.0', group: :development

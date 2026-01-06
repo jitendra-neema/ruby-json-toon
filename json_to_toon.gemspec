@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'lib/json_to_toon/version'
 
 Gem::Specification.new do |spec|
@@ -20,7 +22,8 @@ Gem::Specification.new do |spec|
     'source_code_uri' => spec.homepage,
     'changelog_uri' => "#{spec.homepage}/blob/main/CHANGELOG.md",
     'bug_tracker_uri' => "#{spec.homepage}/issues",
-    'documentation_uri' => 'https://rubydoc.info/gems/json_to_toon'
+    'documentation_uri' => 'https://rubydoc.info/gems/json_to_toon',
+    'rubygems_mfa_required' => 'true'
   }
 
   # Development dependencies
@@ -29,5 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rspec', '~> 3.12'
   spec.add_development_dependency 'rubocop', '~> 1.50'
+  spec.add_development_dependency 'rubocop-rake', '~> 0.7'
+  spec.add_development_dependency 'rubocop-rspec', '~> 3.0'
   spec.add_development_dependency 'simplecov', '~> 0.22'
 end

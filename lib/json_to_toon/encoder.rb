@@ -56,13 +56,13 @@ module JsonToToon
       end
 
       unless VALID_DELIMITERS.include?(@delimiter)
-        raise InvalidOptionError, 
-          "delimiter must be one of #{VALID_DELIMITERS.map(&:inspect).join(', ')}, got: #{@delimiter.inspect}"
+        raise InvalidOptionError,
+              "delimiter must be one of #{VALID_DELIMITERS.map(&:inspect).join(', ')}, got: #{@delimiter.inspect}"
       end
 
-      unless @length_marker == '#' || @length_marker == false
-        raise InvalidOptionError, "length_marker must be '#' or false, got: #{@length_marker.inspect}"
-      end
+      return if @length_marker == '#' || @length_marker == false
+
+      raise InvalidOptionError, "length_marker must be '#' or false, got: #{@length_marker.inspect}"
     end
 
     def encode_value(value, depth, key = nil)
@@ -101,12 +101,8 @@ module JsonToToon
           formatted_value = format_value(value)
           emit_line(indent(depth) + "#{formatted_key}: #{formatted_value}")
         elsif value.is_a?(Hash)
-          if value.empty?
-            emit_line(indent(depth) + "#{formatted_key}:")
-          else
-            emit_line(indent(depth) + "#{formatted_key}:")
-            encode_value(value, depth + 1)
-          end
+          emit_line(indent(depth) + "#{formatted_key}:")
+          encode_value(value, depth + 1) unless value.empty?
         elsif value.is_a?(Array)
           encode_value(value, depth, formatted_key)
         end
@@ -156,8 +152,11 @@ module JsonToToon
 
       length_str = "#{length_prefix}#{array.length}"
       marker = delimiter_marker
-      header = key ? "#{key}[#{length_str}#{marker}]{#{field_header}}:" : 
-                     "[#{length_str}#{marker}]{#{field_header}}:"
+      header = if key
+                 "#{key}[#{length_str}#{marker}]{#{field_header}}:"
+               else
+                 "[#{length_str}#{marker}]{#{field_header}}:"
+               end
 
       emit_line(indent(depth) + header)
 
@@ -195,7 +194,7 @@ module JsonToToon
     def encode_list_item(item, depth)
       base_indent = indent(depth)
       hyphen_line = "#{base_indent}- "
-      field_indent = base_indent + '  '
+      field_indent = "#{base_indent}  "
 
       case item
       when Hash
@@ -217,7 +216,7 @@ module JsonToToon
             encode_value(item[first_key], depth + 1)
 
             # Remaining fields
-            keys[1..-1].each do |k|
+            keys[1..].each do |k|
               fk = format_key(k)
               fv = format_value(item[k])
               emit_line("#{field_indent}#{fk}: #{fv}")
@@ -228,7 +227,7 @@ module JsonToToon
             emit_line("#{hyphen_line}#{formatted_key}: #{fv}")
 
             # Remaining fields at same indent level
-            keys[1..-1].each do |k|
+            keys[1..].each do |k|
               fk = format_key(k)
               v = item[k]
 
@@ -262,13 +261,13 @@ module JsonToToon
 
       base_indent = indent(depth)
       hyphen_line = "#{base_indent}- "
-      field_indent = base_indent + '  '
+      field_indent = "#{base_indent}  "
 
       formatted_key = format_key(first_key)
       emit_line("#{hyphen_line}#{formatted_key}:")
       encode_value(item[first_key], depth + 1, nil)
 
-      keys[1..-1].each do |k|
+      keys[1..].each do |k|
         fk = format_key(k)
         fv = format_value(item[k])
         emit_line("#{field_indent}#{fk}: #{fv}")
@@ -335,7 +334,7 @@ module JsonToToon
       str = str.sub(/\.\z/, '')
 
       # Final -0 check
-      str = '0' if str == '-0' || str == '-0.0'
+      str = '0' if ['-0', '-0.0'].include?(str)
 
       str
     end

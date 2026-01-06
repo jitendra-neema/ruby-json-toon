@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe JsonToToon::Encoder do
@@ -34,7 +36,7 @@ RSpec.describe JsonToToon::Encoder do
 
       it 'accepts false length marker' do
         encoder = described_class.new(length_marker: false)
-        expect(encoder.length_marker).to eq(false)
+        expect(encoder.length_marker).to be(false)
       end
     end
 
@@ -159,7 +161,7 @@ RSpec.describe JsonToToon::Encoder do
 
       it 'encodes hash with nested empty hash' do
         input = { config: {} }
-        expected = "config:"
+        expected = 'config:'
         expect(encoder.encode(input)).to eq(expected)
       end
     end
