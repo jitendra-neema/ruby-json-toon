@@ -103,16 +103,16 @@ jobs:
         run: bundle install --jobs 4 --retry 3
 
       - name: Build gem
-        run: gem build json_to_toon.gemspec
+        run: gem build ruby-json-toon.gemspec
       
       - name: List gem contents
-        run: gem specification json_to_toon-*.gem --ruby | grep files -A 100
+        run: gem specification ruby-json-toon-*.gem --ruby | grep files -A 100
       
       - name: Upload gem artifact
         uses: actions/upload-artifact@v4
         with:
           name: gem-package
-          path: json_to_toon-*.gem
+          path: ruby-json-toon-*.gem
           retention-days: 7
 
   release:
