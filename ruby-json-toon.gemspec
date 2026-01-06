@@ -3,7 +3,7 @@
 require_relative 'lib/json_to_toon/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'json_to_toon'
+  spec.name          = 'ruby-json-toon'
   spec.version       = JsonToToon::VERSION
   spec.authors       = ['Jitendra Neema']
   spec.email         = ['jitenra.neema.8@gmail.com']
@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
     'source_code_uri' => spec.homepage,
     'changelog_uri' => "#{spec.homepage}/blob/main/CHANGELOG.md",
     'bug_tracker_uri' => "#{spec.homepage}/issues",
-    'documentation_uri' => 'https://rubydoc.info/gems/json_to_toon',
+    'documentation_uri' => 'https://rubydoc.info/gems/ruby-json-toon',
     'rubygems_mfa_required' => 'true'
   }
 
