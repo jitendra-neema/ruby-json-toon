@@ -4,32 +4,34 @@ require 'spec_helper'
 require 'json'
 
 RSpec.describe ToonToJson::Decoder do
+  let(:decoder) { described_class.new }
+
   describe '.decode' do
     context 'with primitives' do
       it 'decodes null' do
-        expect(described_class.decode('null')).to eq('null')
+        expect(decoder.decode('null')).to eq('null')
       end
 
       it 'decodes true' do
-        expect(described_class.decode('true')).to eq('true')
+        expect(decoder.decode('true')).to eq('true')
       end
 
       it 'decodes false' do
-        expect(described_class.decode('false')).to eq('false')
+        expect(decoder.decode('false')).to eq('false')
       end
 
       it 'decodes integers' do
-        expect(described_class.decode('42')).to eq('42')
-        expect(described_class.decode('-17')).to eq('-17')
+        expect(decoder.decode('42')).to eq('42')
+        expect(decoder.decode('-17')).to eq('-17')
       end
 
       it 'decodes floats' do
-        expect(described_class.decode('3.14')).to eq('3.14')
-        expect(described_class.decode('-2.5')).to eq('-2.5')
+        expect(decoder.decode('3.14')).to eq('3.14')
+        expect(decoder.decode('-2.5')).to eq('-2.5')
       end
 
       it 'decodes strings' do
-        result = described_class.decode('hello')
+        result = decoder.decode('hello')
         expect(result).to eq('"hello"')
       end
     end
@@ -42,7 +44,7 @@ RSpec.describe ToonToJson::Decoder do
           active: true
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -58,7 +60,7 @@ RSpec.describe ToonToJson::Decoder do
           value: "true"
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -73,7 +75,7 @@ RSpec.describe ToonToJson::Decoder do
           "user-id": 123
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -91,7 +93,7 @@ RSpec.describe ToonToJson::Decoder do
             name: Ada
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -109,7 +111,7 @@ RSpec.describe ToonToJson::Decoder do
               c: 1
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -124,13 +126,13 @@ RSpec.describe ToonToJson::Decoder do
 
     context 'with empty structures' do
       it 'decodes empty root object' do
-        result = described_class.decode('')
+        result = decoder.decode('')
         expect(result).to eq('null')
       end
 
       it 'decodes nested empty object' do
         toon = 'config:'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({ 'config' => {} })
@@ -138,7 +140,7 @@ RSpec.describe ToonToJson::Decoder do
 
       it 'decodes empty array' do
         toon = 'items[0]:'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({ 'items' => [] })
@@ -148,7 +150,7 @@ RSpec.describe ToonToJson::Decoder do
     context 'with inline arrays' do
       it 'decodes inline primitive array' do
         toon = 'tags[3]: admin,ops,dev'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -158,7 +160,7 @@ RSpec.describe ToonToJson::Decoder do
 
       it 'decodes inline array with numbers' do
         toon = 'nums[3]: 1,2,3'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -168,7 +170,7 @@ RSpec.describe ToonToJson::Decoder do
 
       it 'decodes inline array with quoted strings' do
         toon = 'items[2]: "a,b","c,d"'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -185,7 +187,7 @@ RSpec.describe ToonToJson::Decoder do
             2,Bob
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -198,7 +200,7 @@ RSpec.describe ToonToJson::Decoder do
 
       it 'decodes tabular array with tab delimiter' do
         toon = "items[2\t]{sku\tqty}:\n  A1\t5\n  B2\t3"
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -216,7 +218,7 @@ RSpec.describe ToonToJson::Decoder do
             3|4
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -237,7 +239,7 @@ RSpec.describe ToonToJson::Decoder do
             - 3
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -254,7 +256,7 @@ RSpec.describe ToonToJson::Decoder do
               name: Bob
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -273,7 +275,7 @@ RSpec.describe ToonToJson::Decoder do
             - id: 1
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
@@ -285,7 +287,7 @@ RSpec.describe ToonToJson::Decoder do
     context 'with root-level arrays' do
       it 'decodes root inline array' do
         toon = '[3]: a,b,c'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq(%w[a b c])
@@ -298,7 +300,7 @@ RSpec.describe ToonToJson::Decoder do
             2,Bob
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq([
@@ -314,7 +316,7 @@ RSpec.describe ToonToJson::Decoder do
             - id: 2
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq([
@@ -327,7 +329,7 @@ RSpec.describe ToonToJson::Decoder do
     context 'with escape sequences' do
       it 'decodes escaped quotes' do
         toon = 'text: "say \\"hi\\""'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({ 'text' => 'say "hi"' })
@@ -335,7 +337,7 @@ RSpec.describe ToonToJson::Decoder do
 
       it 'decodes escaped backslashes' do
         toon = 'path: "C:\\\\Users"'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({ 'path' => 'C:\\Users' })
@@ -343,7 +345,7 @@ RSpec.describe ToonToJson::Decoder do
 
       it 'decodes escaped newlines' do
         toon = 'text: "line1\\nline2"'
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({ 'text' => "line1\nline2" })
@@ -364,7 +366,7 @@ RSpec.describe ToonToJson::Decoder do
                 active: false
         TOON
 
-        result = described_class.decode(toon)
+        result = decoder.decode(toon)
         parsed = JSON.parse(result)
 
         expect(parsed).to eq({
