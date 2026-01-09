@@ -21,11 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial Encoder class implementation
 - Tests for JSON to TOON conversion
 
-##[0.2.0] - First tagged release
+## [0.2.0] - First Encoder release
 ### Added
- - Updated to run release workflow on tag pushes
+- Updated to run release workflow on tag pushes
 
-## [1.0.0] - TBD
+## [0.3.0] - Decoder implementation
+### Added
+- Added decoder implementation
+- Added ability to seperately require decoder using: require "toon_to_json"
 
 ### Added
 - Initial release
