@@ -142,7 +142,7 @@ jobs:
       - name: Download Built Artifact
         uses: actions/download-artifact@v4
         with:
-          name: built-gem
+          name: gem-package
           path: . # Downloads directly into root to avoid nesting issues
 
       - name: Verify Version Consistency
