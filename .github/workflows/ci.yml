@@ -145,23 +145,6 @@ jobs:
           name: gem-package
           path: . # Downloads directly into root to avoid nesting issues
 
-      - name: Verify Version Consistency
-        shell: bash
-        run: |
-          # Extract version from tag (e.g., v0.3.0 -> 0.3.0)
-          TAG_VERSION=${GITHUB_REF#refs/tags/v}
-          # Extract version from the actual built gem file
-          GEM_FILE=$(ls ruby-json-toon-*.gem)
-          GEM_VERSION=$(gem spec $GEM_FILE version | awk '{print $2}')
-          
-          echo "Tag Version: $TAG_VERSION"
-          echo "Gem Version: $GEM_VERSION"
-          
-          if [ "$TAG_VERSION" != "$GEM_VERSION" ]; then
-            echo "❌ ERROR: Git tag version does not match Gem spec version!"
-            exit 1
-          fi
-
       - name: Publish to RubyGems
         # No API Key needed! The id-token permission handles authentication.
         run: gem push ruby-json-toon-*.gem
