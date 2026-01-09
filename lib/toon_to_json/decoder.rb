@@ -295,6 +295,16 @@ module ToonToJson
         return
       end
 
+      if @i < @lines.length && @lines[@i][:indent] >= child_indent
+        peek_text = @lines[@i][:text]
+        peek_header = parse_array_header(peek_text)
+
+        if peek_header && peek_header[:key].nil?
+          parse_array_of_arrays(child_indent)
+          return
+        end
+      end
+
       # List format - parse items directly
       if @i < @lines.length && @lines[@i][:indent] >= child_indent &&
          @lines[@i][:text].match?(/\A-\s/)
@@ -384,6 +394,26 @@ module ToonToJson
       end
 
       # Empty array
+      @output << ']'
+    end
+
+    def parse_array_of_arrays(child_indent)
+      first_item = true
+
+      while @i < @lines.length && @lines[@i][:indent] >= child_indent
+        child_text = @lines[@i][:text]
+        break if child_text.strip.empty?
+
+        child_header = parse_array_header(child_text)
+        break unless child_header && child_header[:key].nil? # Must be headerless array
+
+        @output << ',' unless first_item
+        first_item = false
+        @i += 1
+
+        parse_array_body(child_header, @lines[@i - 1][:indent] + @indent_unit)
+      end
+
       @output << ']'
     end
 

@@ -421,5 +421,214 @@ RSpec.describe ToonToJson::Decoder do
         expect(parsed['tabular']).to eq([{ 'x' => 1, 'y' => 2 }, { 'x' => 3, 'y' => 4 }])
       end
     end
+
+    # ============================================
+    # ESCAPE SEQUENCES
+    # ============================================
+    context 'with escape sequences' do
+      it 'decodes escaped newlines' do
+        toon = 'text: "line1\\nline2"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'text' => "line1\nline2" })
+      end
+
+      it 'decodes escaped quotes' do
+        toon = 'quote: "say \\"hi\\""'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'quote' => 'say "hi"' })
+      end
+
+      it 'decodes escaped backslashes' do
+        toon = 'path: "C:\\\\Users\\\\test"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'path' => 'C:\\Users\\test' })
+      end
+
+      it 'decodes escaped tabs' do
+        toon = 'data: "col1\\tcol2"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'data' => "col1\tcol2" })
+      end
+
+      it 'decodes escaped carriage returns' do
+        toon = 'text: "line1\\rline2"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'text' => "line1\rline2" })
+      end
+
+      it 'decodes multiple escape sequences' do
+        toon = 'msg: "line1\\npath: C:\\\\test\\ttab"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'msg' => "line1\npath: C:\\test\ttab" })
+      end
+
+      it 'does not double-unescape' do
+        toon = 'text: "\\\\n"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({ 'text' => '\\n' })
+      end
+    end
+
+    # ============================================
+    # COMPLEX NESTED STRUCTURES
+    # ============================================
+    context 'with complex nested structures' do
+      it 'decodes complex e-commerce order' do
+        toon = <<~TOON.chomp
+          order:
+            id: 12345
+            customer:
+              name: John Doe
+              email: john@example.com
+            items[2]{sku,name,qty,price}:
+              A1,Widget,2,9.99
+              B2,Gadget,1,14.5
+            shipping:
+              address: "123 Main St, City"
+              method: express
+            total: 34.48
+        TOON
+
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['order']['id']).to eq(12_345)
+        expect(parsed['order']['items'].length).to eq(2)
+        expect(parsed['order']['customer']['name']).to eq('John Doe')
+        expect(parsed['order']['total']).to eq(34.48)
+      end
+
+      it 'decodes deeply nested with mixed formats' do
+        toon = <<~TOON.chomp
+          root:
+            level1:
+              inline[3]: a,b,c
+              tabular[2]{x,y}:
+                1,2
+                3,4
+              list[2]:
+                - item1
+                - item2
+            level2:
+              nested:
+                deep: value
+        TOON
+
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['root']['level1']['inline']).to eq(%w[a b c])
+        expect(parsed['root']['level1']['tabular'].length).to eq(2)
+        expect(parsed['root']['level1']['list']).to eq(%w[item1 item2])
+        expect(parsed['root']['level2']['nested']['deep']).to eq('value')
+      end
+    end
+
+    # ============================================
+    # EDGE CASES
+    # ============================================
+    context 'with edge cases' do
+      it 'handles empty string vs null' do
+        toon = <<~TOON.chomp
+          empty: ""
+          null_val: null
+          text: value
+        TOON
+
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['empty']).to eq('')
+        expect(parsed['null_val']).to be_nil
+        expect(parsed['text']).to eq('value')
+      end
+
+      it 'handles numbers in various formats' do
+        toon = <<~TOON.chomp
+          int: 42
+          negative: -17
+          float: 3.14
+          negative_float: -2.5
+          scientific: 1.5e10
+          zero: 0
+        TOON
+
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['int']).to eq(42)
+        expect(parsed['negative']).to eq(-17)
+        expect(parsed['float']).to eq(3.14)
+        expect(parsed['negative_float']).to eq(-2.5)
+        expect(parsed['scientific']).to eq(1.5e10)
+        expect(parsed['zero']).to eq(0)
+      end
+
+      it 'handles unicode characters' do
+        toon = 'emoji: "Hello 👋 World 🌍"'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['emoji']).to eq('Hello 👋 World 🌍')
+      end
+
+      it 'handles very long strings' do
+        long_string = 'a' * 1000
+        toon = "text: \"#{long_string}\""
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['text'].length).to eq(1000)
+      end
+
+      it 'handles arrays of arrays' do
+        toon = <<~TOON.chomp
+          matrix[3]:
+            [2]: 1,2
+            [2]: 3,4
+            [2]: 5,6
+        TOON
+
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed).to eq({
+                               'matrix' => [[1, 2], [3, 4], [5, 6]]
+                             })
+      end
+
+      it 'produces valid JSON for all test cases' do
+        test_cases = [
+          'value: 123',
+          'items[2]: a,b',
+          '[1]: test',
+          'key: "quoted"',
+          'list[1]:\n  - item',
+          'obj:\n  nested: true',
+          '-42',
+          'true',
+          '""'
+        ]
+
+        test_cases.each do |toon|
+          result = decoder.decode(toon)
+          expect { JSON.parse(result) }.not_to raise_error, "Failed on: #{toon}"
+        end
+      end
+    end
   end
 end
