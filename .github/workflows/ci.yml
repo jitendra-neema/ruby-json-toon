@@ -138,8 +138,11 @@ jobs:
           bundler: '2.4.22'
           bundler-cache: true
       
-      - name: Publish to RubyGems (Trusted Publishing)
-        uses: rubygems/release-gem@v1
+      - name: Publish to RubyGems
+        run: |
+          # The OIDC token is automatically exchanged for an API key 
+          # by the Ruby setup-ruby/rubygems environment
+          gem push ruby-json-toon-*.gem
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
