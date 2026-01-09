@@ -385,5 +385,41 @@ RSpec.describe ToonToJson::Decoder do
                              })
       end
     end
+
+    # ============================================
+    # DELIMITER VARIATIONS
+    # ============================================
+    context 'with different delimiters' do
+      it 'handles length markers with delimiters' do
+        toon = 'items[#3]: a,b,c'
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+        expect(parsed).to eq({ 'items' => %w[a b c] })
+      end
+
+      it 'handles tab delimiter in inline and tabular' do
+        toon = "inline[2\t]: a\tb\ntabular[2\t]{x\ty}:\n  1\t2\n  3\t4"
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['inline']).to eq(%w[a b])
+        expect(parsed['tabular']).to eq([{ 'x' => 1, 'y' => 2 }, { 'x' => 3, 'y' => 4 }])
+      end
+
+      it 'handles pipe delimiter in inline and tabular' do
+        toon = <<~TOON.chomp
+          inline[2|]: a|b
+          tabular[2|]{x|y}:
+            1|2
+            3|4
+        TOON
+
+        result = decoder.decode(toon)
+        parsed = JSON.parse(result)
+
+        expect(parsed['inline']).to eq(%w[a b])
+        expect(parsed['tabular']).to eq([{ 'x' => 1, 'y' => 2 }, { 'x' => 3, 'y' => 4 }])
+      end
+    end
   end
 end
