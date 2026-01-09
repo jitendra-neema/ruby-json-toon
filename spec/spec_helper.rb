@@ -9,6 +9,7 @@ if ENV['COVERAGE']
 end
 
 require 'json_to_toon'
+require 'toon_to_json'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
