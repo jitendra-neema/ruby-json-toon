@@ -631,4 +631,96 @@ RSpec.describe ToonToJson::Decoder do
       end
     end
   end
+
+  context 'with list block edge cases' do
+    it 'decodes list with empty item followed by nested block' do
+      toon = <<~TOON.chomp
+        items[2]:
+          -#{' '}
+            name: nested
+          - value: simple
+      TOON
+
+      result = decoder.decode(toon)
+      parsed = JSON.parse(result)
+      expect(parsed).to eq({
+                             'items' => [
+                               { 'name' => 'nested' },
+                               { 'value' => 'simple' }
+                             ]
+                           })
+    end
+
+    it 'decodes list item with key-value and additional nested fields' do
+      toon = <<~TOON.chomp
+        users[2]:
+          - id: 1
+            name: Alice
+            active: true
+          - id: 2
+            name: Bob
+      TOON
+
+      result = decoder.decode(toon)
+      parsed = JSON.parse(result)
+      expect(parsed).to eq({
+                             'users' => [
+                               { 'id' => 1, 'name' => 'Alice', 'active' => true },
+                               { 'id' => 2, 'name' => 'Bob' }
+                             ]
+                           })
+    end
+
+    it 'decodes list item with key-only and nested object' do
+      toon = <<~TOON.chomp
+        items[2]:
+          - config:
+              debug: true
+              port: 8080
+          - simple: value
+      TOON
+
+      result = decoder.decode(toon)
+      parsed = JSON.parse(result)
+      expect(parsed).to eq({
+                             'items' => [
+                               { 'config' => { 'debug' => true, 'port' => 8080 } },
+                               { 'simple' => 'value' }
+                             ]
+                           })
+    end
+
+    it 'decodes list item with key-only and no nested content' do
+      toon = <<~TOON.chomp
+        items[1]:
+          - empty:
+      TOON
+
+      result = decoder.decode(toon)
+      parsed = JSON.parse(result)
+      expect(parsed).to eq({
+                             'items' => [{ 'empty' => {} }]
+                           })
+    end
+
+    it 'decodes list with nested field that has key-only and nested block' do
+      toon = <<~TOON.chomp
+        items[1]:
+          - id: 1
+            meta:
+              active: true
+      TOON
+
+      result = decoder.decode(toon)
+      parsed = JSON.parse(result)
+      expect(parsed).to eq({
+                             'items' => [
+                               {
+                                 'id' => 1,
+                                 'meta' => { 'active' => true }
+                               }
+                             ]
+                           })
+    end
+  end
 end
