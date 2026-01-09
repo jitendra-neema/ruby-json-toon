@@ -8,5 +8,6 @@ gem 'bundler', '>= 2.4.22', '< 3'
 
 gem 'rake'
 gem 'robocop'
+gem 'rubocop-rspec'
 gem 'rspec'
 gem 'simplecov', '~> 0.22.0', group: :development

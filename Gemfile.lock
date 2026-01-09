@@ -82,7 +82,7 @@ DEPENDENCIES
   rspec
   rubocop (~> 1.50)
   rubocop-rake (~> 0.7)
-  rubocop-rspec (~> 3.0)
+  rubocop-rspec
   ruby-json-toon!
   simplecov (~> 0.22.0)
 

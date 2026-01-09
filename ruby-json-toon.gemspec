@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'ruby-json-toon'
   spec.version       = JsonToToon::VERSION
   spec.authors       = ['Jitendra Neema']
-  spec.email         = ['jitenra.neema.8@gmail.com']
+  spec.email         = ['jitendra.neema.8@gmail.com']
 
   spec.summary       = 'Convert JSON to TOON (Token-Oriented Object Notation)'
   spec.description   = 'Lightweight Ruby library for converting JSON data to TOON format, achieving 30-60% token reduction for LLM applications'
@@ -34,5 +34,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 1.50'
   spec.add_development_dependency 'rubocop-rake', '~> 0.7'
   spec.add_development_dependency 'rubocop-rspec', '~> 3.0'
-  spec.add_development_dependency 'simplecov', '~> 0.22'
 end

@@ -136,6 +136,7 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler: '2.4.22'
+          bundler-cache: true
       
       - name: Publish to RubyGems (Trusted Publishing)
         uses: rubygems/release-gem@v1
@@ -146,4 +147,3 @@ jobs:
           files: "*.gem"
           generate_release_notes: true
           fail_on_unmatched_files: true
-
