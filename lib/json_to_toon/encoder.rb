@@ -253,24 +253,42 @@ module JsonToToon
     end
 
     # COMPLEX: Handle list item where first field is an array
+    # Implementation: Handle list item where first field is an array
     def encode_list_item_with_array_first(item, depth)
-      # This is a complex edge case from the spec
-      # TODO: Implement proper handling per spec
       keys = item.keys
       first_key = keys.first
+      first_val = item[first_key]
 
       base_indent = indent(depth)
       hyphen_line = "#{base_indent}- "
       field_indent = "#{base_indent}  "
 
-      formatted_key = format_key(first_key)
-      emit_line("#{hyphen_line}#{formatted_key}:")
-      encode_value(item[first_key], depth + 1, nil)
+      # Create the compact header: tags[2]:
+      length_str = "#{length_prefix}#{first_val.length}"
+      marker = delimiter_marker
+      array_header = "#{format_key(first_key)}[#{length_str}#{marker}]:"
 
+      # JOIN the values on the same line as the hyphen
+      if all_primitives?(first_val)
+        values_str = first_val.map { |v| format_value(v) }.join(@delimiter)
+        emit_line("#{hyphen_line}#{array_header} #{values_str}")
+      else
+        # Fallback for complex arrays (keep as is)
+        emit_line("#{hyphen_line}#{array_header}")
+        first_val.each { |sub| encode_list_item(sub, depth + 1) }
+      end
+
+      # Encode remaining fields (id, etc.)
       keys[1..].each do |k|
+        v = item[k]
         fk = format_key(k)
-        fv = format_value(item[k])
-        emit_line("#{field_indent}#{fk}: #{fv}")
+        # NOTE: Use field_indent to align with the start of the keys
+        if primitive?(v)
+          emit_line("#{field_indent}#{fk}: #{format_value(v)}")
+        else
+          emit_line("#{field_indent}#{fk}:")
+          encode_value(v, depth + 1)
+        end
       end
     end
 
