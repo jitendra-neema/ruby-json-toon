@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative 'lib/json_to_toon/version'
+require_relative 'lib/ruby_json_toon/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'ruby-json-toon'
-  spec.version       = JsonToToon::VERSION
+  spec.version       = RubyJsonToon::VERSION
   spec.authors       = ['Jitendra Neema']
   spec.email         = ['jitendra.neema.8@gmail.com']
 
