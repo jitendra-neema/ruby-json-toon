@@ -83,13 +83,13 @@ puts toon
 # 2. Decode TOON back to JSON/Ruby
 json_string = RubyJsonToon.decode(toon)
 data = JSON.parse(json_string)
-Output: 
-data = {
-  "project"=>"SecureAPI",
-   "meta"=>{"version"=>"1.0", "active"=>true},
-   "users"=>[{"id"=>101, "name"=>"Alice", "access"=>["read", "write"]}, {"id"=>102, "name"=>"Bob", "access"=>["read"]}],
-   "logs"=>[{"event"=>"login", "status"=>200}, {"event"=>"query", "status"=>200}, {"event"=>"logout", "status"=>204}]
- }
+# Output: 
+# data = {
+#  "project"=>"SecureAPI",
+#   "meta"=>{"version"=>"1.0", "active"=>true},
+#   "users"=>[{"id"=>101, "name"=>"Alice", "access"=>["read", "write"]}, {"id"=>102, "name"=>"Bob", "access"=>["read"]}],
+#   "logs"=>[{"event"=>"login", "status"=>200}, {"event"=>"query", "status"=>200}, {"event"=>"logout", "status"=>204}]
+# }
 
 ```
 
