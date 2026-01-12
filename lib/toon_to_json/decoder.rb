@@ -12,15 +12,9 @@ module ToonToJson
       if lines.length == 1
         line = lines.first.strip
 
-        # Check if it's a primitive (not a TOON structure)
-        # TOON structures have:
-        # - Colons (key:value or key:)
-        # - List items (starts with "- " - note the space!)
-        # - Array headers (starts with [)
-
         is_structure = line.include?(':') ||
-                       line.match?(/\A-\s/) ||  # "- " with space (list item)
-                       line.match?(/\A\[/)      # Array header
+                       line.match?(/\A-\s/) ||
+                       line.match?(/\A\[/)
 
         return primitive_to_json(line) unless is_structure
       end
@@ -54,19 +48,16 @@ module ToonToJson
     def parse_block(min_indent)
       return parse_object_block(min_indent) if @i >= @lines.length
 
-      # Check if first line is array header
       first_line = @lines[@i][:text]
       if first_line.match?(/\A\[/)
         array_header = parse_array_header(first_line)
         if array_header && array_header[:key].nil?
-          # Root-level array
           @i += 1
           parse_array_body(array_header, @lines[@i - 1][:indent] + @indent_unit)
           return
         end
       end
 
-      # Check if list format (starts with "- " with space)
       start_i = @i
       while start_i < @lines.length
         ln = @lines[start_i]
@@ -92,7 +83,6 @@ module ToonToJson
         break if ln[:raw].strip.empty?
         break if ln[:indent] < min_indent
 
-        # Array header
         if (array_header = parse_array_header(ln[:text]))
           @output << ',' unless first
           first = false
@@ -109,7 +99,6 @@ module ToonToJson
           next
         end
 
-        # Key-value pair
         if (kv = parse_key_value_line(ln[:text]))
           @output << ',' unless first
           first = false
@@ -121,7 +110,6 @@ module ToonToJson
           next
         end
 
-        # Key-only (nested object)
         if (key = parse_key_only(ln[:text]))
           @output << ',' unless first
           first = false
@@ -158,7 +146,6 @@ module ToonToJson
     def parse_array_body(header, child_indent)
       @output << '['
 
-      # Inline values
       if header[:inline] && !header[:inline].strip.empty?
         delim = detect_delimiter(header[:marker], header[:fields])
         values = split_with_quotes(header[:inline], delim)
@@ -172,7 +159,6 @@ module ToonToJson
         return
       end
 
-      # Tabular format
       if header[:fields]
         delim = detect_delimiter(header[:marker], header[:fields])
         fields = split_with_quotes(header[:fields], delim)
@@ -213,7 +199,6 @@ module ToonToJson
         end
       end
 
-      # List format - parse items directly
       if @i < @lines.length && @lines[@i][:indent] >= child_indent &&
          @lines[@i][:text].match?(/\A-\s/)
         first = true
@@ -238,6 +223,73 @@ module ToonToJson
             next
           end
 
+          # FIXED: Check if it's an array header first (like "access[2]: read,write")
+          if (inline_array = parse_array_header(after))
+            @output << '{'
+            @output << json_string(inline_array[:key])
+            @output << ':'
+
+            # Parse the inline array directly
+            @output << '['
+            if inline_array[:inline] && !inline_array[:inline].strip.empty?
+              delim = detect_delimiter(inline_array[:marker], inline_array[:fields])
+              values = split_with_quotes(inline_array[:inline], delim)
+              values.each_with_index do |v, idx|
+                @output << ',' if idx > 0
+                @output << value_to_json(v.strip)
+              end
+            end
+            @output << ']'
+
+            @i += 1
+
+            # Handle remaining fields
+            if @i < @lines.length && @lines[@i][:indent] > ln[:indent]
+              child_ind = @lines[@i][:indent]
+
+              while @i < @lines.length && @lines[@i][:indent] >= child_ind
+                field_ln = @lines[@i]
+                break if field_ln[:text].match?(/\A-\s/)
+
+                # Check if field is an array header
+                if (field_array = parse_array_header(field_ln[:text]))
+                  @output << ','
+                  @output << json_string(field_array[:key])
+                  @output << ':'
+
+                  @output << '['
+                  if field_array[:inline] && !field_array[:inline].strip.empty?
+                    delim = detect_delimiter(field_array[:marker], field_array[:fields])
+                    vals = split_with_quotes(field_array[:inline], delim)
+                    vals.each_with_index do |v, idx|
+                      @output << ',' if idx > 0
+                      @output << value_to_json(v.strip)
+                    end
+                  end
+                  @output << ']'
+                  @i += 1
+                elsif field_kv = parse_key_value_line(field_ln[:text])
+                  @output << ','
+                  @output << json_string(field_kv[:key])
+                  @output << ':'
+                  @output << field_kv[:value]
+                  @i += 1
+                elsif field_key = parse_key_only(field_ln[:text])
+                  @output << ','
+                  @output << json_string(field_key)
+                  @output << ':'
+                  @i += 1
+                  parse_block(field_ln[:indent] + @indent_unit)
+                else
+                  break
+                end
+              end
+            end
+
+            @output << '}'
+            next
+          end
+
           if (kv = parse_key_value_line(after))
             @output << '{'
             @output << json_string(kv[:key])
@@ -253,7 +305,24 @@ module ToonToJson
                 field_ln = @lines[@i]
                 break if field_ln[:text].match?(/\A-\s/)
 
-                if field_kv = parse_key_value_line(field_ln[:text])
+                # FIXED: Check if field is an array header
+                if (field_array = parse_array_header(field_ln[:text]))
+                  @output << ','
+                  @output << json_string(field_array[:key])
+                  @output << ':'
+
+                  @output << '['
+                  if field_array[:inline] && !field_array[:inline].strip.empty?
+                    delim = detect_delimiter(field_array[:marker], field_array[:fields])
+                    vals = split_with_quotes(field_array[:inline], delim)
+                    vals.each_with_index do |v, idx|
+                      @output << ',' if idx > 0
+                      @output << value_to_json(v.strip)
+                    end
+                  end
+                  @output << ']'
+                  @i += 1
+                elsif field_kv = parse_key_value_line(field_ln[:text])
                   @output << ','
                   @output << json_string(field_kv[:key])
                   @output << ':'
@@ -301,7 +370,6 @@ module ToonToJson
         return
       end
 
-      # Empty array
       @output << ']'
     end
 
@@ -313,7 +381,7 @@ module ToonToJson
         break if child_text.strip.empty?
 
         child_header = parse_array_header(child_text)
-        break unless child_header && child_header[:key].nil? # Must be headerless array
+        break unless child_header && child_header[:key].nil?
 
         @output << ',' unless first_item
         first_item = false
@@ -442,7 +510,6 @@ module ToonToJson
       return 'false' if t.casecmp('false').zero?
       return 'null' if t.casecmp('null').zero?
 
-      # Numbers
       return t if t.match?(/\A-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\z/)
 
       json_string(t)
