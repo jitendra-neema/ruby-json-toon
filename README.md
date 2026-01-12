@@ -138,4 +138,4 @@ MIT License — see see LICENSE file for details.
 * **TOON Specification:** [https://toonformat.dev](https://toonformat.dev)
 * **Homepage:** [https://github.com/jitendra-neema/ruby-json-toon](https://github.com/jitendra-neema/ruby-json-toon)
 * **Bug Tracker:** [https://github.com/jitendra-neema/ruby-json-toon/issues](https://github.com/jitendra-neema/ruby-json-toon/issues)
-* **Rubygems:** [https://rubygems.org/gems/ruby-json-toon](ruby-json-toon)
+* **Rubygems:** [https://rubygems.org/gems/ruby-json-toon](https://rubygems.org/gems/ruby-json-toon)
