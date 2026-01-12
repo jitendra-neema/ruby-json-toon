@@ -6,12 +6,6 @@ Lightweight Ruby library for converting JSON data to TOON (Token-Oriented Object
 
 Convert JSON to TOON (Token-Oriented Object Notation)
 
-Homepage: https://github.com/jitendra-neema/ruby-json-toon  
-Documentation: https://rubydoc.info/gems/ruby-json-toon  
-Changelog: https://github.com/jitendra-neema/ruby-json-toon/blob/main/CHANGELOG.md  
-Bug tracker: https://github.com/jitendra-neema/ruby-json-toon/issues  
-Rubygems: https://rubygems.org/gems/ruby-json-toon
-
 Requires Ruby >= 2.7.0
 
 # RubyJsonToon
@@ -148,3 +142,4 @@ MIT License — see see LICENSE file for details.
 * **TOON Specification:** [https://toonformat.dev](https://toonformat.dev)
 * **Homepage:** [https://github.com/jitendra-neema/ruby-json-toon](https://github.com/jitendra-neema/ruby-json-toon)
 * **Bug Tracker:** [https://github.com/jitendra-neema/ruby-json-toon/issues](https://github.com/jitendra-neema/ruby-json-toon/issues)
+* **Rubygems:** [https://rubygems.org/gems/ruby-json-toon](ruby-json-toon)
