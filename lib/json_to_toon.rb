@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'json_to_toon/version'
 require_relative 'json_to_toon/encoder'
 
 module JsonToToon

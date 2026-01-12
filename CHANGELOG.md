@@ -30,5 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added decoder implementation
 - Added ability to seperately require decoder using: require "toon_to_json"
 
+## [1.0.0] - Complete JSON to TOON roundtrip conversion
 ### Added
-- Initial release
+- RubyJsonToon wrapper to encapsulate all logic
+- Simple 2 method implementation
+- Fixed known issues
