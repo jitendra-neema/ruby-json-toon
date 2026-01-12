@@ -61,15 +61,11 @@ bundle install
 ```ruby
 require 'ruby_json_toon'
 
-# 1. Encode Ruby Hash to TOON
-data = { 
-  project: 'SecureAPI', 
-  tags: ['ruby', 'auth'],
-  users: [
-    { id: 101, name: 'Alice', access: ['read', 'write'] },
-    { id: 102, name: 'Bob', access: ['read'] }
-  ]
-}
+# 1. Encode JSON to TOON
+data = {"project"=>"SecureAPI",
+ "meta"=>{"version"=>"1.0", "active"=>true},
+ "users"=>[{"id"=>101, "name"=>"Alice", "access"=>["read", "write"]}, {"id"=>102, "name"=>"Bob", "access"=>["read"]}],
+ "logs"=>[{"event"=>"login", "status"=>200}, {"event"=>"query", "status"=>200}, {"event"=>"logout", "status"=>204}]}
 
 toon = RubyJsonToon.encode(data)
 puts toon
@@ -86,6 +82,14 @@ puts toon
 
 # 2. Decode TOON back to JSON/Ruby
 json_string = RubyJsonToon.decode(toon)
+data = JSON.parse(json_string)
+Output: 
+data = {
+  "project"=>"SecureAPI",
+   "meta"=>{"version"=>"1.0", "active"=>true},
+   "users"=>[{"id"=>101, "name"=>"Alice", "access"=>["read", "write"]}, {"id"=>102, "name"=>"Bob", "access"=>["read"]}],
+   "logs"=>[{"event"=>"login", "status"=>200}, {"event"=>"query", "status"=>200}, {"event"=>"logout", "status"=>204}]
+ }
 
 ```
 
