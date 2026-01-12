@@ -1,18 +1,10 @@
-# JSON to TOON
-
-Lightweight Ruby library for converting JSON data to TOON (Token-Oriented Object Notation), achieving 30–60% token reduction for LLM applications.
-
-## Summary
-
-Convert JSON to TOON (Token-Oriented Object Notation)
-
-Requires Ruby >= 2.7.0
-
 # RubyJsonToon
 
 Lightweight, high-performance Ruby library for converting between JSON and **TOON (Token-Oriented Object Notation)**. 
 
 TOON is an indentation-based data format optimized for **LLM token efficiency**, achieving **30–60% token reduction** compared to JSON while remaining fully human-readable and machine-parseable.
+
+Requires Ruby >= 2.7.0
 
 ## What is TOON?
 
